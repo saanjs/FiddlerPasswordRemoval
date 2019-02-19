@@ -81,13 +81,13 @@ namespace RemoveFiddlerPassword
                 }
                 if (success)
                 {
-                    MessageBox.Show("We could able to find password in the Fiddler trace and successfully deleted the password. Fiddler trace is now safe to be shared with Microsoft Support.", "Successfully Removed Password", 
+                    MessageBox.Show("We could able to find password in the Fiddler trace and successfully deleted the password. Fiddler trace is now safe to be shared.", "Successfully Removed Password", 
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     progBar.Visible = false;
                 }
                 else
                 {
-                    MessageBox.Show("There is no password found in the Fiddler trace. Fiddler trace is safe to be shared with Microsoft Support.", "No password found", 
+                    MessageBox.Show("There is no password found in the Fiddler trace. Fiddler trace is safe to be shared.", "No password found", 
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     progBar.Visible = false;
                 }
