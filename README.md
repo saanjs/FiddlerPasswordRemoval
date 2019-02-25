@@ -10,5 +10,5 @@ ReadFile() method uses ZipFile class to open the .saz file and ZipArchiveEntry c
 
 It checks for ".saz" extensions and also uses ProgressBar control to display the progress.
 
-<b> Update 21-02-2019: It can now handle .har files </b>
+<b> Update 21-02-2019: It can now handle .har files </b></br>
 <b> Update 25-02-2019 : It can now scrub passwords captured through forms based authentication too </b>
