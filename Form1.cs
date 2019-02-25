@@ -30,7 +30,7 @@ namespace RemoveFiddlerPassword
         public void ReadFile(string zipPath, string pathExtension)
         {            
             int successCount = 0;
-            string document = "";          
+            string document = "";
 
             try
             {
@@ -85,37 +85,47 @@ namespace RemoveFiddlerPassword
 
                                         using (StreamWriter writer = new StreamWriter(stream))
                                         {
-                                            writer.Write(document);                                            
+                                            writer.Write(document);
                                             successCount++;
                                         }
-                                    }                                    
+                                    }
                                 }
                             }
                         }
-                    }                    
+                    }
                 }
                 else
                 {
                     string harFile = File.ReadAllText(zipPath);
-                    int passwdLocation = harFile.IndexOf("passwd");
-                    string extractedText = harFile.Substring(passwdLocation + 52);
-                    string oldPassword = extractedText.Substring(0, extractedText.IndexOf('"'));
-                    if (oldPassword != null)
-                    {
-                        if (oldPassword.Length != 0 &&
-                            oldPassword != "DELETED")
-                        {
-                            
-                            string newharFile = harFile.Replace(oldPassword, "DELETED");
+                    int passwdLocation = 0;
+                    string extractedText = string.Empty;
+                    string oldPassword = string.Empty;
 
-                            using (StreamWriter writer = new StreamWriter(zipPath))
-                            {
-                                writer.Write(newharFile);
-                                successCount++;
-                            }
-                        }                        
-                    }                   
-                }                
+                    if (harFile.Contains("passwd"))
+                    {
+                        passwdLocation = harFile.IndexOf("passwd");
+                        extractedText = harFile.Substring(passwdLocation + 52);
+                        oldPassword = extractedText.Substring(0, extractedText.IndexOf('"'));
+                        successCount = ProcessFile(oldPassword, harFile, zipPath);
+                    }                    
+                    else if (harFile.Contains("&Password"))
+                    {
+                        harFile = File.ReadAllText(zipPath);
+                        passwdLocation = harFile.IndexOf("&Password");
+                        extractedText = harFile.Substring(passwdLocation + 10);
+                        oldPassword = extractedText.Substring(0, extractedText.IndexOf('&'));
+                        successCount = ProcessFile(oldPassword, harFile, zipPath);
+                    }
+                    else if (harFile.Contains("Password"))
+                    {
+                        harFile = File.ReadAllText(zipPath);
+                        passwdLocation = harFile.IndexOf("Password");
+                        extractedText = harFile.Substring(passwdLocation + 54);
+                        oldPassword = extractedText.Substring(0, extractedText.IndexOf('"'));
+                        successCount = ProcessFile(oldPassword, harFile, zipPath);
+                    }
+                }                            
+                           
                 if (successCount > 0)
                 {
                     MessageBox.Show("Found clear text password and deleted successfuly.", "Successfully Removed Password", 
@@ -134,6 +144,27 @@ namespace RemoveFiddlerPassword
                 richTextBox1.Text = ex.Message.ToString() + ex.StackTrace.ToString();
                 richTextBox1.Visible = true;
             }            
+        }
+
+        private int ProcessFile(string oldPassword, string harFile, string zipPath)
+        {
+            int successCount = 0;
+            if (oldPassword != null)
+            {
+                if (oldPassword.Length != 0 &&
+                    oldPassword != "DELETED")
+                {
+
+                    string newharFile = harFile.Replace(oldPassword, "DELETED");
+
+                    using (StreamWriter writer = new StreamWriter(zipPath))
+                    {
+                        writer.Write(newharFile);
+                        successCount++;
+                    }
+                }
+            }
+            return successCount;
         }
 
         private void btnSelectFile_Click(object sender, EventArgs e)
