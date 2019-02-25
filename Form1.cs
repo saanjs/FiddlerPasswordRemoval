@@ -28,8 +28,8 @@ namespace RemoveFiddlerPassword
         }
 
         public void ReadFile(string zipPath, string pathExtension)
-        {
-            bool success = false;
+        {            
+            int successCount = 0;
             string document = "";          
 
             try
@@ -62,30 +62,37 @@ namespace RemoveFiddlerPassword
                                 using (var reader = new StreamReader(stream))
                                 {
                                     document = reader.ReadToEnd();
-                                    if (document.ToLower().Contains("passwd"))
+                                    if (document.ToLower().Contains("passwd")
+                                        || document.Contains("&Password"))
                                     {
                                         if (!document.ToLower().Contains("deleted"))
                                         {
-                                            document = document.Replace(document.Substring((document.IndexOf("passwd") + 7),
-                                                (document.IndexOf("&ps") - (document.IndexOf("passwd") + 7))),
-                                                "DELETED");
-                                            stream.SetLength(text.Length);
-
-                                            using (StreamWriter writer = new StreamWriter(stream))
+                                            if (document.ToLower().Contains("passwd"))
                                             {
-                                                writer.Write(document);
-                                                success = true;
+                                                document = document.Replace(document.Substring((document.IndexOf("passwd") + 7),
+                                                    (document.IndexOf("&ps") - (document.IndexOf("passwd") + 7))),
+                                                    "DELETED");
+                                            }
+                                            else
+                                            {
+                                                document = document.Replace(document.Substring((document.IndexOf("Password") + 9),
+                                                (document.IndexOf("&AuthMethod") - (document.IndexOf("Password") + 9))),
+                                                "DELETED");
                                             }
                                         }
-                                        else
+
+                                        stream.SetLength(text.Length);
+
+                                        using (StreamWriter writer = new StreamWriter(stream))
                                         {
-                                            success = false;
+                                            writer.Write(document);                                            
+                                            successCount++;
                                         }
-                                    }
+                                    }                                    
                                 }
                             }
                         }
-                    }
+                    }                    
                 }
                 else
                 {
@@ -104,20 +111,12 @@ namespace RemoveFiddlerPassword
                             using (StreamWriter writer = new StreamWriter(zipPath))
                             {
                                 writer.Write(newharFile);
-                                success = true;
+                                successCount++;
                             }
-                        }
-                        else
-                        {
-                            success = false;
-                        }
-                    }
-                    else
-                    {
-                        success = false;
-                    }
+                        }                        
+                    }                   
                 }                
-                if (success)
+                if (successCount > 0)
                 {
                     MessageBox.Show("Found clear text password and deleted successfuly.", "Successfully Removed Password", 
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -132,7 +131,7 @@ namespace RemoveFiddlerPassword
             }
             catch (Exception ex)
             {
-                richTextBox1.Text = ex.StackTrace.ToString();
+                richTextBox1.Text = ex.Message.ToString() + ex.StackTrace.ToString();
                 richTextBox1.Visible = true;
             }            
         }
