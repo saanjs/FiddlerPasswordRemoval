@@ -79,15 +79,16 @@ namespace RemoveFiddlerPassword
                                                 (document.IndexOf("&AuthMethod") - (document.IndexOf("Password") + 9))),
                                                 "DELETED");
                                             }
-                                        }
 
-                                        stream.SetLength(text.Length);
+                                            stream.SetLength(text.Length);
 
-                                        using (StreamWriter writer = new StreamWriter(stream))
-                                        {
-                                            writer.Write(document);
-                                            successCount++;
+                                            using (StreamWriter writer = new StreamWriter(stream))
+                                            {
+                                                writer.Write(document);
+                                                successCount++;
+                                            }
                                         }
+                                        
                                     }
                                 }
                             }
