@@ -12,3 +12,4 @@ It checks for ".saz" extensions and also uses ProgressBar control to display the
 
 <b> Update 21-02-2019: It can now handle .har files </b></br>
 <b> Update 25-02-2019 : It can now scrub passwords captured through forms based authentication too </b>
+<b> Update 20-03-2019 : Bug fix - password cleaned fiddler was used to be scanned which is now handled </b>
